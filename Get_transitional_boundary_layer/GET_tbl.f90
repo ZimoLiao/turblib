@@ -22,8 +22,8 @@ program GetTBL
   character(*), parameter :: authtoken = 'cn.edu.ustc.mail.boliu128-285c1f8f' // CHAR(0)
   character(1) :: field
 
-  integer :: time_step
-  integer, parameter :: x_start=676, y_start=1, z_start=801, x_end=775, y_end=80, z_end=870
+  integer :: time_step, y
+  integer, parameter :: x_start=676, y_start=1, z_start=801, x_end=825, y_end=120, z_end=920
   integer, parameter :: x_step=1, y_step=1, z_step=1, filter_width=1
   integer :: size, i
   real(RP), allocatable :: result(:)
@@ -37,7 +37,7 @@ program GetTBL
 
   ! Formatting rules
   character(*), parameter :: rawformat1='(i6,1(a,f10.6))'
-  character(4) :: ch_step
+  character(4) :: ch_step, ch_y
 
   !
   ! Intialize the gSOAP runtime.
@@ -51,25 +51,32 @@ program GetTBL
   print *, ".........transition_bl u.........";
   field='u'
   if (field=='u') then
-    size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step*3;
+    ! size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step*3;
+    size = (x_end-x_start+1)/x_step * (z_end-z_start+1)/z_step*3;
   else if (field=='p') then
-    size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step;
+    ! size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step;
+    size = (x_end-x_start+1)/x_step * (z_end-z_start+1)/z_step;
   end if
   allocate(result(size))
   print *, field=='u', size
 
-  do time_step = 1,50,1
+  do time_step = 1,200,1
     write (ch_step, '(I4.4)') time_step
-    ! Load data
-    write(*,*) '  load '//ch_step
-    rc = getcutout (authtoken, "transition_bl", field, time_step, x_start, y_start, z_start, &
-      x_end, y_end, z_end, x_step, y_step, z_step, filter_width, result)
 
-    ! Write data
-    write(*,*) '  write '//ch_step
-    open(13,file='tbl_local.'//ch_step,form='unformatted')
-    write(13) result
-    close(13)
+    do y = y_start, y_end
+      write (ch_y, '(I4.4)') y
+      ! Load data
+      write(*,*) '  load  t='//ch_step//' y='//ch_y
+      rc = getcutout (authtoken, "transition_bl", field, time_step, x_start, y, z_start, &
+        x_end, y, z_end, x_step, y_step, z_step, filter_width, result)
+
+      ! Write data
+      write(*,*) '  write t='//ch_step//' y='//ch_y
+      open(13,file='tbl_local.t'//ch_step//'y'//ch_y,form='unformatted')
+      write(13) result
+      close(13)
+
+    end do
   end do
 
   deallocate(result)
