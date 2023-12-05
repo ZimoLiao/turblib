@@ -23,7 +23,7 @@ program GetTBL
   character(1) :: field
 
   integer :: time_step
-  integer, parameter :: x_start=601, y_start=1, z_start=761, x_end=1000, y_end=160, z_end=1060
+  integer, parameter :: x_start=676, y_start=1, z_start=801, x_end=775, y_end=80, z_end=870
   integer, parameter :: x_step=1, y_step=1, z_step=1, filter_width=1
   integer :: size, i
   real(RP), allocatable :: result(:)
@@ -51,14 +51,14 @@ program GetTBL
   print *, ".........transition_bl u.........";
   field='u'
   if (field=='u') then
-    size = (x_end-x_start+1) * (y_end-y_start+1) * (z_end-z_start+1)*3;
+    size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step*3;
   else if (field=='p') then
-    size = (x_end-x_start+1) * (y_end-y_start+1) * (z_end-z_start+1);
+    size = (x_end-x_start+1)/x_step * (y_end-y_start+1)/y_step * (z_end-z_start+1)/z_step;
   end if
   allocate(result(size))
   print *, field=='u', size
 
-  do time_step = 1,500
+  do time_step = 1,50,1
     write (ch_step, '(I4.4)') time_step
     ! Load data
     write(*,*) '  load '//ch_step
