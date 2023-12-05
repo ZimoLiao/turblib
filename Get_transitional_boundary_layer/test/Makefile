@@ -37,13 +37,13 @@ OBJ =	soapC.o \
 	stdsoap2.o \
         turblib.o
 
-all: GET_tbl.exe
+all: TEST_tbl.exe
 
-GET_tbl.exe : $(OBJ) GET_tbl.o
-	$(FC) -o $@ $(OBJ) GET_tbl.o $(LDLIBS)
+TEST_tbl.exe : $(OBJ) TEST_tbl.o
+	$(FC) -o $@ $(OBJ) TEST_tbl.o $(LDLIBS)
 	 
-GET_tbl.o : GET_tbl.f90
-	$(FC) -c GET_tbl.f90
+TEST_tbl.o : TEST_tbl.f90
+	$(FC) -c TEST_tbl.f90
 
 stdsoap2.o: stdsoap2.c
 	$(CC) $(CFLAGS) -c $<
