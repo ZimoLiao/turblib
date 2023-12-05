@@ -4,6 +4,8 @@
 
 /.vs
 *.o
+*.a
+*.exe
 /.vscode
 DEMO_turbf
 DEMO_turbc
@@ -15,3 +17,4 @@ DEMO_mixingc
 DEMO_mixingf
 DEMO_getCutoutc
 DEMO_getCutoutf
+compiler_flags

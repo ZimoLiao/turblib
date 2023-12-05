@@ -64,14 +64,14 @@
 
     real(RP), parameter :: time = 0.364_RP;
 
-    real(RP) :: points(3, 10)    ! input
-    real(RP) :: dataout1(10)     ! p
-    real(RP) :: dataout2(2, 10)  ! results from invariant
-    real(RP) :: dataout3(3, 10)  ! x,y,z
-    real(RP) :: dataout4(4, 10)  ! x,y,z,p
-    real(RP) :: dataout6(6, 10)  ! results from Pressure Hessian
-    real(RP) :: dataout9(9, 10)  ! results from Velocity Gradient
-    real(RP) :: dataout18(18, 10) ! results from Velocity Hessian
+    real(RP) :: points(3, 10000)    ! input
+    real(RP) :: dataout1(10000)     ! p
+    real(RP) :: dataout2(2, 10000)  ! results from invariant
+    real(RP) :: dataout3(3, 10000)  ! x,y,z
+    real(RP) :: dataout4(4, 10000)  ! x,y,z,p
+    real(RP) :: dataout6(6, 10000)  ! results from Pressure Hessian
+    real(RP) :: dataout9(9, 10000)  ! results from Velocity Gradient
+    real(RP) :: dataout18(18, 10000) ! results from Velocity Hessian
 
     integer,parameter :: x_start=1, y_start=1, z_start=1, x_end=4, y_end=4, z_end=4
 
@@ -96,14 +96,14 @@
     integer :: i
 
     ! Formatting rules
-    character(*), parameter :: format1='(i3,1(a,e13.6))'
+    character(*), parameter :: format1='(i5,1(a,e13.6))'
     character(*), parameter :: rawformat1='(i4,1(a,e13.6))'
-    character(*), parameter :: format3='(i3,3(a,e13.6))'
+    character(*), parameter :: format3='(i5,3(a,e13.6))'
     character(*), parameter :: rawformat3='(i4,3(a,e13.6))'
-    character(*), parameter :: format4='(i3,4(a,e13.6))'
-    character(*), parameter :: format6='(i3,6(a,e13.6))'
-    character(*), parameter :: format9='(i3,9(a,e13.6))'
-    character(*), parameter :: format18='(i3,18(a,e13.6))'
+    character(*), parameter :: format4='(i5,4(a,e13.6))'
+    character(*), parameter :: format6='(i5,6(a,e13.6))'
+    character(*), parameter :: format9='(i5,9(a,e13.6))'
+    character(*), parameter :: format18='(i5,18(a,e13.6))'
     character(*), parameter :: formatT='(3(a,i4),1(a,e13.6))'
     !
     ! Intialize the gSOAP runtime.
@@ -114,37 +114,37 @@
     ! Enable exit on error.  See README for details.
     CALL turblibSetExitOnError(1)
 
-    do i = 1, 10
-        points(1, i) = 0.20 * i
-        points(2, i) = 0.09 * i
-        points(3, i) = 0.15 * i
+    do i = 1, 10000
+        points(1, i) = 0.20 * i/100.
+        points(2, i) = 0.09 * i/100.
+        points(3, i) = 0.15 * i/100.
     end do
 
     write(*,*)
     write(*,'(a)') "Coordinates of 10 points where variables are requested:"
-    do i = 1, 10
+    do i = 1, 10000
         write(*,format3) i, ': ', points(1,i), ', ', points(2,i), ', ', points(3,i)
     end do
 
 
     write(*,*)
     write(*,'(a)') 'Requesting velocity at 10 points...'
-    rc = getvelocity(authkey, dataset, time, Lag6, NoTInt, 10, points, dataout3)
-    do i = 1, 10
+    rc = getvelocity(authkey, dataset, time, Lag6, NoTInt, 10000, points, dataout3)
+    do i = 1, 10000
         write(*,format3) i, ': ', dataout3(1,i), ', ', dataout3(2,i), ', ', dataout3(3,i)
     end do
 
     write(*,*)
     write(*,'(a)') 'Requesting velocity and pressure at 10 points...'
-    rc = getvelocityandpressure(authkey, dataset, time, Lag6, NoTInt, 10, points, dataout4)
-    do i = 1, 10
+    rc = getvelocityandpressure(authkey, dataset, time, Lag6, NoTInt, 10000, points, dataout4)
+    do i = 1, 10000
         write(*,format4) i, ': ', dataout4(1,i), ', ', dataout4(2,i), ', ', dataout4(3,i), ', ', dataout4(4,i)
     end do
 
     write(*,*)
     write(*,'(a)') 'Requesting velocity gradient at 10 points...'
-    rc = getvelocitygradient(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout9)
-    do i = 1, 10
+    rc = getvelocitygradient(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout9)
+    do i = 1, 10000
         write(*,format9) i, ': duxdx=', dataout9(1,i), ', duxdy=', dataout9(2,i), &
             ', duxdz=', dataout9(3,i), ', duydx=', dataout9(4,i),  &
             ', duydy=', dataout9(5,i), ', duydz=', dataout9(6,i),  &
@@ -154,15 +154,15 @@
 
     write(*,*)
     write(*,'(a)') 'Requesting velocity laplacian at 10 points...'
-    rc = getvelocitylaplacian(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout3)
-    do i = 1, 10
+    rc = getvelocitylaplacian(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout3)
+    do i = 1, 10000
         write(*,format3) i, ': grad2ux=', dataout3(1,i), ', grad2uy=', dataout3(2,i), ', grad2uz=', dataout3(3,i)
     end do
 
     write(*,*)
     write(*,'(a)') 'Requesting velocity hessian at 10 points...'
-    rc = getvelocityhessian(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout18)
-    do i = 1, 10
+    rc = getvelocityhessian(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout18)
+    do i = 1, 10000
         write(*,format18) i, ': d2uxdxdx=', dataout18(1,i), &
             ', d2uxdxdy=', dataout18(2,i), &
             ', d2uxdxdz=', dataout18(3,i), &
@@ -185,22 +185,22 @@
 
     write(*,*)
     write(*,'(a)') 'Requesting pressure at 10 points...'
-    rc = getpressure(authkey, dataset, time, Lag6, NoTInt, 10, points, dataout1)
-    do i = 1, 10
+    rc = getpressure(authkey, dataset, time, Lag6, NoTInt, 10000, points, dataout1)
+    do i = 1, 10000
         write(*,format1) i, ': ', dataout1(i)
     end do
 
     write(*,*)
     write(*,'(a)') 'Requesting pressure gradient at 10 points...'
-    rc = getpressuregradient(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout3)
-    do i = 1, 10
+    rc = getpressuregradient(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout3)
+    do i = 1, 10000
         write(*,format3) i, ': dpdx=', dataout3(1,i), ', dpdy=', dataout3(2,i), ', dpdz=', dataout3(3,i)
     end do
 
     write(*,*)
     write(*,'(a)') 'Requesting pressure hessian at 10 points...'
-    rc = getpressurehessian(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout6)
-    do i = 1, 10
+    rc = getpressurehessian(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout6)
+    do i = 1, 10000
         write(*,format6) i, ': d2pdxdx=', dataout6(1,i), ', d2pdxdy=', dataout6(2,i), &
             ', d2pdxdz=', dataout6(3,i), ', d2pdydy=', dataout6(4,i),  &
             ', d2pdydz=', dataout6(5,i), ', d2pdzdz', dataout6(6,i)
@@ -208,8 +208,8 @@
 
     write(*,*)
     write(*,'(a)') 'Requesting invariant at 10 points...'
-    rc = getinvariant(authkey, dataset, time, FD4Lag4, NoTInt, 10, points, dataout2)
-    do i = 1, 10
+    rc = getinvariant(authkey, dataset, time, FD4Lag4, NoTInt, 10000, points, dataout2)
+    do i = 1, 10000
         write(*,format3) i, ': S2=', dataout2(1,i), ', O2=', dataout2(2,i)
     end do
 
